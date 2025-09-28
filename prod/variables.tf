@@ -5,19 +5,19 @@
 variable "aws_account_id" {
   description = "AWS Account ID"
   type        = string
-  default     = "327019199684"
+  default     = "987686461697"
 }
 
 variable "aws_region" {
   description = "AWS Region used for deployments"
   type        = string
-  default     = "us-east-2"
+  default     = "eu-west-1"
 }
 
 variable "main_region" {
   description = "Primary region for VPC and global resources"
   type        = string
-  default     = "us-east-2"
+  default     = "eu-west-1"
 }
 
 ################################################################################
@@ -52,7 +52,7 @@ variable "cluster_name" {
 variable "rolearn" {
   description = "IAM role ARN to be added to the aws-auth configmap as admin"
   type        = string
-  default     = "arn:aws:iam::327019199684:role/terraform-create-role"
+  default     = "arn:aws:iam::987686461697:role/terraform-create-role"
 }
 
 
