@@ -50,13 +50,7 @@ jobs:
           if [ -n "${{ secrets.AWS_SESSION_TOKEN }}" ]; then
             printf 'AWS_SESSION_TOKEN=%s\n' "${{ secrets.AWS_SESSION_TOKEN }}" >> "$GITHUB_ENV"
           fi
-
-      - name: Verify keys look sane (lengths only)
-        run: |
-          echo -n "$AWS_ACCESS_KEY_ID"      | wc -c
-          echo -n "$AWS_SECRET_ACCESS_KEY"  | wc -c
-          [ -n "$AWS_SESSION_TOKEN" ] && echo -n "$AWS_SESSION_TOKEN" | wc -c
-
+          
       - name: Who am I?
         run: aws sts get-caller-identity
 
