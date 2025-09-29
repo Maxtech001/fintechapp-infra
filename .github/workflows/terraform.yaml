@@ -1,4 +1,34 @@
-# ... same `name`, `on`, `concurrency` as above ...
+permissions:
+  id-token: write # Required for OIDC authentication
+  contents: read  # Required for actions/checkout
+
+name: Terraform-AWS-Infra-Deployment
+on:
+  push:
+    branches:
+      - main   
+  pull_request:
+    branches:
+      - main 
+      - release
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: "Deployment Environment (dev, qa, uat, prod)"
+        required: true
+        default: "prod"
+      region:
+        description: "AWS Region"
+        required: true
+        default: "eu-west-1"
+      action:
+        description: "Terraform action: apply (default) or destroy"
+        required: false
+        default: "apply"
+
+concurrency:
+  group: terraform-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   plan:
