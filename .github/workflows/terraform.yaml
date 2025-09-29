@@ -67,9 +67,9 @@ jobs:
         working-directory: ${{ env.TF_DIR }}
         run: terraform fmt -check
 
-      - name: Terraform init
-        working-directory: ${{ env.TF_DIR }}
-        run: terraform init -upgrade -backend-config="key=${{ env.TF_ENV }}/terraform.tfstate"
+      #- name: Terraform init
+       # working-directory: ${{ env.TF_DIR }}
+        #run: terraform init -upgrade -backend-config="key=${{ env.TF_ENV }}/terraform.tfstate"
 
       - name: Terraform plan
         working-directory: ${{ env.TF_DIR }}
