@@ -1,31 +1,4 @@
-permissions:
-  id-token: write
-  contents: read
-
-name: Terraform-AWS-Infra-Deployment
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main, release ]
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: "Deployment Environment (dev, qa, uat, prod)"
-        required: true
-        default: "prod"
-      region:
-        description: "AWS Region"
-        required: true
-        default: "eu-west-1"
-      action:
-        description: "Terraform action: apply (default) or destroy"
-        required: false
-        default: "apply"
-
-concurrency:
-  group: terraform-${{ github.ref }}
-  cancel-in-progress: false
+# ... same `name`, `on`, `concurrency` as above ...
 
 jobs:
   plan:
@@ -39,11 +12,20 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::987686461697:role/<ROLE_FOR_GITHUB_OIDC>
-          aws-region: ${{ env.AWS_REGION }}
+      - name: Sanitize AWS secrets into env
+        run: |
+          printf 'AWS_ACCESS_KEY_ID=%s\n' "${{ secrets.AWS_ACCESS_KEY_ID }}"       >> "$GITHUB_ENV"
+          printf 'AWS_SECRET_ACCESS_KEY=%s\n' "${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> "$GITHUB_ENV"
+          # If you use temporary creds, also include the session token:
+          if [ -n "${{ secrets.AWS_SESSION_TOKEN }}" ]; then
+            printf 'AWS_SESSION_TOKEN=%s\n' "${{ secrets.AWS_SESSION_TOKEN }}" >> "$GITHUB_ENV"
+          fi
+
+      - name: Verify keys look sane (lengths only)
+        run: |
+          echo -n "$AWS_ACCESS_KEY_ID"      | wc -c
+          echo -n "$AWS_SECRET_ACCESS_KEY"  | wc -c
+          [ -n "$AWS_SESSION_TOKEN" ] && echo -n "$AWS_SESSION_TOKEN" | wc -c
 
       - name: Who am I?
         run: aws sts get-caller-identity
@@ -89,11 +71,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Configure AWS credentials (OIDC)
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          role-to-assume: arn:aws:iam::987686461697:role/<ROLE_FOR_GITHUB_OIDC>
-          aws-region: ${{ env.AWS_REGION }}
+      - name: Sanitize AWS secrets into env
+        run: |
+          printf 'AWS_ACCESS_KEY_ID=%s\n' "${{ secrets.AWS_ACCESS_KEY_ID }}"       >> "$GITHUB_ENV"
+          printf 'AWS_SECRET_ACCESS_KEY=%s\n' "${{ secrets.AWS_SECRET_ACCESS_KEY }}" >> "$GITHUB_ENV"
+          if [ -n "${{ secrets.AWS_SESSION_TOKEN }}" ]; then
+            printf 'AWS_SESSION_TOKEN=%s\n' "${{ secrets.AWS_SESSION_TOKEN }}" >> "$GITHUB_ENV"
+          fi
 
       - name: Who am I?
         run: aws sts get-caller-identity
@@ -115,5 +99,3 @@ jobs:
         if: ${{ github.event.inputs.action == 'destroy' }}
         working-directory: ${{ env.TF_DIR }}
         run: terraform destroy -auto-approve -lock=false
-
-# end of file
