@@ -1,16 +1,13 @@
 permissions:
-  id-token: write # Required for OIDC authentication
-  contents: read  # Required for actions/checkout
+  id-token: write
+  contents: read
 
 name: Terraform-AWS-Infra-Deployment
 on:
   push:
-    branches:
-      - main   
+    branches: [ main ]
   pull_request:
-    branches:
-      - main 
-      - release
+    branches: [ main, release ]
   workflow_dispatch:
     inputs:
       environment:
@@ -37,11 +34,19 @@ jobs:
     env:
       TF_ENV: ${{ github.event.inputs.environment || 'prod' }}
       AWS_REGION: ${{ github.event.inputs.region || 'eu-west-1' }}
+      AWS_DEFAULT_REGION: ${{ github.event.inputs.region || 'eu-west-1' }}
       TF_DIR: ${{ github.event.inputs.environment || 'prod' }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::987686461697:role/<ROLE_FOR_GITHUB_OIDC>
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Who am I?
+        run: aws sts get-caller-identity
 
       - uses: hashicorp/setup-terraform@v2
         with:
@@ -54,7 +59,7 @@ jobs:
 
       - name: Terraform fmt check
         working-directory: ${{ env.TF_DIR }}
-        run: terraform fmt -check -recursive
+        run: terraform fmt -check
 
       - name: Terraform init
         working-directory: ${{ env.TF_DIR }}
@@ -79,11 +84,19 @@ jobs:
     env:
       TF_ENV: ${{ github.event.inputs.environment || 'prod' }}
       AWS_REGION: ${{ github.event.inputs.region || 'eu-west-1' }}
+      AWS_DEFAULT_REGION: ${{ github.event.inputs.region || 'eu-west-1' }}
       TF_DIR: ${{ github.event.inputs.environment || 'prod' }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::987686461697:role/<ROLE_FOR_GITHUB_OIDC>
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Who am I?
+        run: aws sts get-caller-identity
 
       - uses: hashicorp/setup-terraform@v2
         with:
@@ -102,3 +115,5 @@ jobs:
         if: ${{ github.event.inputs.action == 'destroy' }}
         working-directory: ${{ env.TF_DIR }}
         run: terraform destroy -auto-approve -lock=false
+
+# end of file
