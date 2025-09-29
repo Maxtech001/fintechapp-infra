@@ -23,7 +23,7 @@ on:
         required: true
         default: "eu-west-1"
       action:
-        description: "Terraform action: apply (default) or destroy"
+        description: "Terraform action: apply (default) or destroy)"
         required: false
         default: "apply"
 
@@ -51,6 +51,7 @@ jobs:
           if [ -n "${{ secrets.AWS_SESSION_TOKEN }}" ]; then
             printf 'AWS_SESSION_TOKEN=%s\n' "${{ secrets.AWS_SESSION_TOKEN }}" >> "$GITHUB_ENV"
           fi
+
       - name: Who am I?
         run: aws sts get-caller-identity
 
@@ -67,9 +68,9 @@ jobs:
         working-directory: ${{ env.TF_DIR }}
         run: terraform fmt -check
 
-      #- name: Terraform init
-       # working-directory: ${{ env.TF_DIR }}
-        #run: terraform init -upgrade -backend-config="key=${{ env.TF_ENV }}/terraform.tfstate"
+      - name: Terraform init
+        working-directory: ${{ env.TF_DIR }}
+        run: terraform init -upgrade -backend-config="key=${{ env.TF_ENV }}/terraform.tfstate"
 
       - name: Terraform plan
         working-directory: ${{ env.TF_DIR }}
@@ -109,8 +110,8 @@ jobs:
         with:
           terraform_version: "1.5.0"
 
-    #  - name: Terraform init
-    #   run: terraform init -backend-config="key=${{ env.TF_ENV }}/terraform.tfstate"
+      - name: Terraform init
+        run: terraform init -backend-config="key=${{ env.TF_ENV }}/terraform.tfstate"
 
       - name: Terraform Apply
         if: ${{ github.event.inputs.action != 'destroy' }}

@@ -1,0 +1,13 @@
+2025-09-29T20:13:33.862+0300 [INFO]  Terraform version: 1.12.0
+2025-09-29T20:13:33.867+0300 [DEBUG] using github.com/hashicorp/go-tfe v1.74.1
+2025-09-29T20:13:33.867+0300 [DEBUG] using github.com/hashicorp/hcl/v2 v2.23.1-0.20250203194505-ba0759438da2
+2025-09-29T20:13:33.867+0300 [DEBUG] using github.com/hashicorp/terraform-svchost v0.1.1
+2025-09-29T20:13:33.867+0300 [DEBUG] using github.com/zclconf/go-cty v1.16.2
+2025-09-29T20:13:33.867+0300 [INFO]  Go runtime version: go1.24.2
+2025-09-29T20:13:33.867+0300 [INFO]  CLI args: []string{"C:\\Users\\Maxtech\\Terraform\\terraform.exe", "init", "-reconfigure", "-backend-config=bucket=maxtech470-terraform-backend-bucket", "-backend-config=key=env/proj/terraform.tfstate", "-backend-config=region=eu-west-1"}
+2025-09-29T20:13:33.878+0300 [DEBUG] Attempting to open CLI config file: C:\Users\Maxtech\AppData\Roaming\terraform.rc
+2025-09-29T20:13:33.879+0300 [DEBUG] File doesn't exist, but doesn't need to. Ignoring.
+2025-09-29T20:13:33.880+0300 [DEBUG] ignoring non-existing provider search directory terraform.d/plugins
+2025-09-29T20:13:33.881+0300 [DEBUG] ignoring non-existing provider search directory C:\Users\Maxtech\AppData\Roaming\terraform.d\plugins
+2025-09-29T20:13:33.885+0300 [DEBUG] ignoring non-existing provider search directory C:\Users\Maxtech\AppData\Roaming\HashiCorp\Terraform\plugins
+2025-09-29T20:13:33.887+0300 [INFO]  CLI command args: []string{"init", "-reconfigure", "-backend-config=bucket=maxtech470-terraform-backend-bucket", "-backend-config=key=env/proj/terraform.tfstate", "-backend-config=region=eu-west-1"}
